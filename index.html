@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>StayScope · Airbnb Room Type Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<header class="top">
+  <div class="brand"><span class="logo">◈</span> StayScope</div>
+  <div class="api-box">
+    <span id="statusDot" class="dot"></span>
+    <input id="apiUrl" value="http://127.0.0.1:8000" spellcheck="false" aria-label="API URL" />
+    <button id="pingBtn" class="ghost sm" type="button">Test</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero reveal">
+    <h1>Which <span class="grad">room type</span> is this listing?</h1>
+    <p>Describe an NYC Airbnb listing and the model predicts whether it's an entire home, a private room or a shared room.</p>
+    <div class="presets">
+      <span>Try a preset:</span>
+      <button class="chip" data-preset="luxury" type="button">🏙️ Manhattan loft</button>
+      <button class="chip" data-preset="brooklyn" type="button">🌉 Brooklyn room</button>
+      <button class="chip" data-preset="budget" type="button">🎒 Budget Queens</button>
+    </div>
+  </section>
+
+  <div class="layout">
+    <form id="form" class="card reveal" novalidate>
+      <h2><i>01</i> Location</h2>
+      <div class="field">
+        <label>Borough</label>
+        <div id="boroughs" class="seg"></div>
+      </div>
+      <div class="field">
+        <label for="neighbourhood">Neighbourhood</label>
+        <select id="neighbourhood" required></select>
+      </div>
+
+      <div class="field">
+        <label>Pin on map <small>(click to set coordinates)</small></label>
+        <canvas id="map" width="560" height="300"></canvas>
+        <div class="two">
+          <div><label for="latitude">Latitude</label><input type="number" id="latitude" step="any" min="-90" max="90" required /></div>
+          <div><label for="longitude">Longitude</label><input type="number" id="longitude" step="any" min="-180" max="180" required /></div>
+        </div>
+      </div>
+
+      <h2><i>02</i> Listing details</h2>
+      <div class="field">
+        <label for="price">Price per night</label>
+        <div class="money"><span>$</span><input type="number" id="price" min="1" step="1" required /></div>
+        <input type="range" id="priceRange" min="10" max="1000" step="5" />
+      </div>
+      <div class="field slider">
+        <label for="minimum_nights">Minimum nights <output id="o_minimum_nights"></output></label>
+        <input type="range" id="minimum_nights" min="1" max="365" />
+      </div>
+      <div class="field slider">
+        <label for="availability_365">Availability (days / year) <output id="o_availability_365"></output></label>
+        <input type="range" id="availability_365" min="0" max="365" />
+      </div>
+
+      <h2><i>03</i> Host &amp; reviews</h2>
+      <div class="three">
+        <div><label for="number_of_reviews">Total reviews</label><input type="number" id="number_of_reviews" min="0" step="1" required /></div>
+        <div><label for="reviews_per_month">Reviews / month</label><input type="number" id="reviews_per_month" min="0" step="0.01" required /></div>
+        <div><label for="calculated_host_listings_count">Host listings</label><input type="number" id="calculated_host_listings_count" min="0" step="1" required /></div>
+      </div>
+
+      <div id="formError" class="error" role="alert"></div>
+      <button id="submit" class="primary" type="submit"><span class="label">Predict room type</span><span class="spin"></span></button>
+    </form>
+
+    <aside class="card result reveal" id="resultCard">
+      <div id="empty" class="empty">
+        <div class="orb"></div>
+        <p>Your prediction will appear here.</p>
+      </div>
+      <div id="out" class="out hidden">
+        <div class="eyebrow">Predicted room type</div>
+        <div id="roomIcon" class="room-icon"></div>
+        <h3 id="roomName"></h3>
+        <div class="conf"><span id="confNum">0</span>% confidence</div>
+        <div id="bars" class="bars"></div>
+        <p id="insight" class="insight"></p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>Built with FastAPI · scikit-learn RandomForest · vanilla JS</footer>
+<script src="script.js"></script>
+</body>
+</html>
